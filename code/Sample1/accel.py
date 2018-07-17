@@ -12,7 +12,8 @@ signal.signal(signal.SIGINT, sigint_handler)
 context = zmq.Context()
 socket = context.socket(zmq.PUB)
 #socket.connect("ipc://domainsock")
-socket.connect("tcp://127.0.0.1:9000")
+#socket.connect("tcp://127.0.0.1:9000")
+socket.bind("tcp://127.0.0.1:9000")
 f = open('accel.out', 'w')
 count = 0
 endProgram = False
