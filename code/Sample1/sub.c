@@ -43,8 +43,11 @@ int main (int argc, char *argv [])
     char * needle = "-";
     char * index;
     int num = 0;
+    char * string;
+    int rcvMore = 0;
+    size_t optLen = sizeof(rcvMore);
     while(G_Proc_Alive) {
-        char *string = s_recv (subscriber);
+        string = s_recv (subscriber);
         if (!string)
             break;
         index = strstr(string, needle);
@@ -55,12 +58,10 @@ int main (int argc, char *argv [])
             printf("%s",string);
         
         free (string);
-        printf("%d\n", num);
+//        printf("%d\n", num);
+
     }
-    printf("1\n");
     zmq_close (subscriber);
-    printf("1\n");
     zmq_ctx_destroy (context);
-    printf("1\n");
     return 0;
 }
