@@ -1,6 +1,11 @@
-
-#include "zhelpers.h"
+//#include "zhelpers.h"
 #include <signal.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+
+#include <zmq.h>
 
 static char G_Proc_Alive = 1;
 
@@ -8,6 +13,23 @@ void sigint_handler(int arg){
 //    G_Proc_Alive = 0;
     printf("hand\n");
     return;
+}
+
+char * s_recv(void * sock){
+    int chunk = 10;
+    char buf[chunk+1];
+    int total;
+    int count = 1;
+    char * msg = NULL;
+    while (total > chunk){
+        msg = realloc(msg, count * chunk);
+        total = zmq_recv(sock, buf, chunk, 0);
+        memcpy(msg + ((count-1) * chunk), buf, total);
+        count++;
+    }
+    msg = realloc(msg, (count-1) * chunk + 1);
+    msg[(count-1) * chunk] = 0;
+    return msg;
 }
 
 int main (int argc, char *argv [])
