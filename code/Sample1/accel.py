@@ -18,7 +18,7 @@ f = open('accel.out', 'w')
 count = 0
 endProgram = False
 while not endProgram:
-    data = 'Accel-' + str(count) + '\n'
+    data = 'Accel-' + str(count)# + '\n'
     f.write(data)
     f.flush()
     socket.send_string(data)

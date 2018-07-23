@@ -16,9 +16,10 @@ void sigint_handler(int arg){
 }
 
 char * s_recv(void * sock){
-    int chunk = 10;
+    int chunk = 8;
     char buf[chunk+1];
-    int total;
+    buf[chunk] = 0;
+    int total = 11;
     int count = 1;
     char * msg = NULL;
     while (total > chunk){
@@ -26,6 +27,7 @@ char * s_recv(void * sock){
         total = zmq_recv(sock, buf, chunk, 0);
         memcpy(msg + ((count-1) * chunk), buf, total);
         count++;
+        printf("buf %s\n", buf);
     }
     msg = realloc(msg, (count-1) * chunk + 1);
     msg[(count-1) * chunk] = 0;
@@ -59,7 +61,6 @@ int main (int argc, char *argv [])
                          gpsFilter, strlen (gpsFilter));
     assert (rc == 0);
 
-    //  Process 100 updates
     int update_nbr;
     long total_temp = 0;
     char * needle = "-";
