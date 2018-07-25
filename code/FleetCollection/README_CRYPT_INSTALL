@@ -1,0 +1,3 @@
+sudo apt-get install libffi-dev
+sudo pip3 install cryptography
+
