@@ -1,18 +1,12 @@
 #!/usr/bin/env python3
 
-import os
-import zmq
-import time
+import adxl
+from common import *
 
 import configparser
 import signal
 from sys import exit
 from time import sleep
-
-configFile = 'config.ini'
-
-def exists(file):
-    return os.path.exists(file)
 
 if __name__ == "__main__":
     if not exists(configFile):
@@ -45,19 +39,21 @@ if __name__ == "__main__":
         shouldEndFile = True
     signal.signal(signal.Signals[splitSignal], split_handler)
 
-    # Start publisher
-    context = zmq.Context()
-    socket = context.socket(zmq.PUB)
-    socket.bind("tcp://127.0.0.1:" + pubPort)
-
+    adxl345 = adxl.ADXL345()
+    f = newFile(workDir, name)
+    shouldEndFile = False
     shouldStop = False
 
-    axes = {'x': 5.55, 'y':10.1010, 'z':15.1515}
     while True:
-        if shouldStop:
-            exit(0)
-        msg = '{:.3f},{:f},{:f},{:f}\n'.format(time.time(), axes['x'], axes['y'], axes['z'])
-        print("Before send: %s" % msg)
-        socket.send_string(msg)
-        print("After send: %s" % msg)
+        if shouldEndFile:
+            shouldEndFile = False
+            moveFile(f, doneDir)
+            if shouldStop:
+                exit(0)
+            f = newFile(workDir, name)
+
+        axes = adxl345.getAxes()
+        f.write('{:.3f},{:f},{:f},{:f}\n'.format(now(), axes['x'], axes['y'], axes['z']))
+        f.flush()
+
         sleep(interval)
